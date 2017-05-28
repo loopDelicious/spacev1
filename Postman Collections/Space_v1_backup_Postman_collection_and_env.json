@@ -1,0 +1,362 @@
+{
+  "variables": [],
+  "info": {
+    "name": "Space v1",
+    "_postman_id": "ebbe8a4a-b005-f261-1f23-8901f2e5278f",
+    "description": "Super Cool Space Collection\n===\n\nThis is a sample collection and environment for the tutorial outlined in [Not your Grandma's Postman](http://blog.getpostman.com/2017/05/27/not-your-grandmas-postman/).\n\nRetrieve the **Astronomy Pic of the Day from NASA**, get an Imgur auth token, and then post the picture to **Imgur**.\n\n[![beautiful space pic](https://apod.nasa.gov/apod/image/1705/M101p2000bagi.jpg)](https://apod.nasa.gov/apod/image/1705/M101p2000bagi.jpg)\n\nIf you haven't already, click the Run in Postman button to get the collection and environment into your Postman app. In the Postman app, you should now see this collection in the sidebar to the left, and this environment selected in the dropdown in the top right.\n\n[![download Space collection](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/importSpace1.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/importSpace1.png)\n\nTo get started:\n===\n1. **Register an Imgur app:** \n\n  Head to Imgur and [register a new application](https://api.imgur.com/oauth2/addclient). Select OAuth 2 authorization with a callback URL, and add the following Authorization callback URL - `https://www.getpostman.com/oauth2/callback`.\n  \n  Make a note of your Imgur app's `Client ID` and `Client secret`. \n  \n  [![imgur client id](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurClientSecret_censored.jpg)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurClientSecret_censored.jpg) \n\n2. **Add your Imgur credentials to Postman:**\n\n  In the Postman app, head to the **Quick Look** icon in the top right to view your variables. Click the **Edit** link.\n  \n  [![quick look icon](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurQuickLook.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurQuickLook.png)\n  \n  Update the `imgurClientId` and `imgurClientSecret` values with your own, and hit **Update**.\n\n  [![update environment variable](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurEnv.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurEnv.png) \n\n3. **Get an auth token from Imgur:** \n  \n  We will use [Imgur's OAuth 2.0 process](https://apidocs.imgur.com/#authorization-and-oauth) to get a refresh token. \n\n  In the Postman app, under a new request, click on the **Authorization** tab, select OAuth 2.0, click on the **Get New Access Token** button, and fill in these values:\n    - Token Name: can be anything\n    - Auth URL: `https://api.imgur.com/oauth2/authorize`\n    - Access Token URL: `https://api.imgur.com/oauth2/token`\n    - Client ID: {{imgurClientId}}\n    - Client Secret: {{imgurClientSecret}}\n    - Grant Type: Authorization Code\n    - Request access token locally: checked\n  \n  [![Postman OAuth 2.0](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAccessTokenModal.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAccessTokenModal.png) \n\n  Click on **Request Token** to initiate the OAuth 2.0 flow authorizing the Postman app to connect to your Imgur account.\n  \n  [![Imgur Oauth](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurOauth.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurOauth.png) \n  \n  Once that is completed, add the `refresh_token` value to your environment under the `imgurRefreshToken` key, the same way you added your Imgur credentials to Postman in Step 2.\n   \n  [![Imgur refresh token](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/refreshTokenOauth.jpg)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/refreshTokenOauth.jpg) \n\n4. **Run the collection:** \n\n  Click on the right angle bracket (**>**) next to the collection to open the collection details flyout, and click the blue **Run** button.\n\n  [![collection details](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurRunSpaceCollection.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurRunSpaceCollection.png)\n\n  This will open the collection runner in a separate window. Verify that the correct collection and environment is selected in the respective dropdowns, and then click the **Start Run** button.\n\n  [![collection runner](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/collection_runner2.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/collection_runner2.png)\n\n  In the collection runner, watch your tests running (and hopefully passing). If all goes well, your picture has been posted privately to Imgur under your account.\n  \n  [![collection runner gif](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/collectionRunner2.gif)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/collectionRunner2.gif)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "_postman_id": "701ca9dc-6060-9b1e-2b41-291bf9ca11b3",
+      "name": "Get the astronomy pic of the day",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// for commonly used tests, click on the snippets to the right for starter code. Any modifications or custom scripts can be written in JavaScript.",
+              "",
+              "// this first test ensures a successful 200 response status code",
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "",
+              "// this second block of code will parse the response object and set environment variables",
+              "if (responseCode.code === 200) {",
+              "    ",
+              "    try {",
+              "        // parse the JSON response object to access title, explanation, and hdurl",
+              "        var result = JSON.parse(responseBody);",
+              "        var title = result.title;",
+              "        var explanation = result.explanation;",
+              "        var url = result.hdurl;",
+              "    }",
+              "    ",
+              "    catch(e) {",
+              "        console.log(e);",
+              "    }",
+              "    ",
+              "    // the setEnvironmentVariable() method accepts a variable name and value as parameters. Use this method to establish environment variables that can be accessed in subsequent requests when the entire collection is run along with the corresponding environment template.",
+              "    postman.setEnvironmentVariable(\"spaceTitle\", title);",
+              "    postman.setEnvironmentVariable(\"spaceExplanation\", explanation);",
+              "    postman.setEnvironmentVariable(\"spaceUrl\", url);",
+              "",
+              "}",
+              ""
+            ]
+          }
+        }
+      ],
+      "request": {
+        "url": "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&hd=True",
+        "method": "GET",
+        "header": [],
+        "body": {},
+        "description": "<img src=\"https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/nasa.jpg\" width=\"200px\">\n\nGET request for Astronomy Picture of the Day from NASA\n===\n\nSending this request will return a picture posted by NASA. Review [documentation](https://api.nasa.gov/api.html#apod) for the NASA API.\n\nStart in the Postman request builder. \n\n  - Method: Select `GET` from the dropdown menu of HTTP methods.\n\n  - URL: Enter the URL endpoint provided by NASA - `https://api.nasa.gov/planetary/apod`\n\n  - Parameters: This request will work without any additional parameters, and default to using NASA's demo key. However, we can choose to add query string parameters to our request. Click the Params button to reveal a key-value editor. As you input parameters, they are automatically added to the query string in the URL bar above.\n\nUnder the Postman **Tests** tab, we can write scripts in JavaScript to execute any logic after the request is sent. \n\nPostman tests are a good way to ensure that you're getting the correct, anticipated responses from your requests. You can include custom scripts to execute additional logic too.\n\n[![tests tab](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/APODtests.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/APODtests.png)\n\n- Under the Postman **Tests** tab, the first test ensures a successful 200 response status code.  \n- The second test will parse the JSON response object, and set environment variables (title, URL, etc.) that can be accessed in subsequent requests when the entire collection is run.\n- The third bit of code controls the workflow sequence and designates which request in the same collection to run next, instead of the next request in the list.\n\nRead more about [writing tests](https://www.getpostman.com/docs/postman/scripts/test_scripts) and [controlling the workflow](https://www.getpostman.com/docs/postman/collection_runs/building_workflows) in the Postman docs.  \n"
+      },
+      "response": [
+        {
+          "id": "6d9ca92f-74b2-2981-c588-99ddb5c3e8f0",
+          "name": "200 success",
+          "originalRequest": {
+            "url": "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&hd=True",
+            "method": "GET",
+            "header": [],
+            "body": {}
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "_postman_previewtype": "text",
+          "header": [
+            {
+              "description": "The age the object has been in a proxy cache in seconds",
+              "key": "Age",
+              "name": "Age",
+              "value": "0"
+            },
+            {
+              "description": "Options that are desired for the connection",
+              "key": "Connection",
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "description": "The type of encoding used on the data.",
+              "key": "Content-Encoding",
+              "name": "Content-Encoding",
+              "value": "gzip"
+            },
+            {
+              "description": "The length of the response body in octets (8-bit bytes)",
+              "key": "Content-Length",
+              "name": "Content-Length",
+              "value": "642"
+            },
+            {
+              "description": "The mime type of this content",
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "description": "The date and time that the message was sent",
+              "key": "Date",
+              "name": "Date",
+              "value": "Thu, 13 Apr 2017 21:46:19 GMT"
+            },
+            {
+              "description": "A name for the server",
+              "key": "Server",
+              "name": "Server",
+              "value": "openresty"
+            },
+            {
+              "description": "A HSTS Policy informing the HTTP client how long to cache the HTTPS only policy and whether this applies to subdomains.",
+              "key": "Strict-Transport-Security",
+              "name": "Strict-Transport-Security",
+              "value": "max-age=31536000"
+            },
+            {
+              "description": "Tells downstream proxies how to match future request headers to decide whether the cached response can be used rather than requesting a fresh one from the origin server.",
+              "key": "Vary",
+              "name": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "description": "Tells downstream proxies how to match future request headers to decide whether the cached response can be used rather than requesting a fresh one from the origin server.",
+              "key": "Vary",
+              "name": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "description": "Informs the client of proxies through which the response was sent.",
+              "key": "Via",
+              "name": "Via",
+              "value": "1.1 vegur, http/1.1 api-umbrella (ApacheTrafficServer [cMsSf ])"
+            },
+            {
+              "description": "Custom header",
+              "key": "X-Cache",
+              "name": "X-Cache",
+              "value": "MISS"
+            },
+            {
+              "description": "Custom header",
+              "key": "X-RateLimit-Limit",
+              "name": "X-RateLimit-Limit",
+              "value": "40"
+            },
+            {
+              "description": "Custom header",
+              "key": "X-RateLimit-Remaining",
+              "name": "X-RateLimit-Remaining",
+              "value": "39"
+            }
+          ],
+          "cookie": [],
+          "responseTime": "562",
+          "body": "{\n  \"copyright\": \"G\\u00f6ran Strand\",\n  \"date\": \"2017-04-13\",\n  \"explanation\": \"On April 10, a Full Moon and Jupiter shared this telephoto field of view. Both were near opposition, opposite the Sun in Earth's night sky. Captured when a passing cloud bank dimmmed the bright moonlight, the single exposure reveals the familiar face of our fair planet's own large natural satellite, along with a line up of the ruling gas giant's four Galilean moons. Labeled top to bottom, the tiny pinpricks of light above bright Jupiter are Callisto, Europa, Ganymede, and Io. Closer and brighter, our own natural satellite appears to loom large. But Callisto, Ganymede, and Io are physically larger than Earth's Moon, while water world Europa is only slightly smaller.  In fact, of the Solar System's six largest planetary satellites, only Saturn's moon Titan is missing from the scene.\",\n  \"hdurl\": \"https://apod.nasa.gov/apod/image/1704/GS_20170410_MoonJupiter_7435.jpg\",\n  \"media_type\": \"image\",\n  \"service_version\": \"v1\",\n  \"title\": \"Moons and Jupiter\",\n  \"url\": \"https://apod.nasa.gov/apod/image/1704/GS_20170410_MoonJupiter_7435px1024.jpg\"\n}"
+        },
+        {
+          "id": "f359a81b-eb8b-a4d6-7602-cd5cd49cf978",
+          "name": "200",
+          "originalRequest": {
+            "url": "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&hd=True",
+            "method": "GET",
+            "header": [],
+            "body": {}
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "_postman_previewtype": "text",
+          "header": [
+            {
+              "description": "",
+              "key": "Age",
+              "name": "Age",
+              "value": "0"
+            },
+            {
+              "description": "",
+              "key": "Connection",
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "description": "",
+              "key": "Content-Length",
+              "name": "Content-Length",
+              "value": "949"
+            },
+            {
+              "description": "",
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "description": "",
+              "key": "Date",
+              "name": "Date",
+              "value": "Fri, 31 Mar 2017 22:55:44 GMT"
+            },
+            {
+              "description": "",
+              "key": "Server",
+              "name": "Server",
+              "value": "openresty"
+            },
+            {
+              "description": "",
+              "key": "Via",
+              "name": "Via",
+              "value": "1.1 vegur, http/1.1 api-umbrella (ApacheTrafficServer [cMsSf ])"
+            },
+            {
+              "description": "",
+              "key": "X-Cache",
+              "name": "X-Cache",
+              "value": "MISS"
+            },
+            {
+              "description": "",
+              "key": "X-RateLimit-Limit",
+              "name": "X-RateLimit-Limit",
+              "value": "40"
+            },
+            {
+              "description": "",
+              "key": "X-RateLimit-Remaining",
+              "name": "X-RateLimit-Remaining",
+              "value": "38"
+            }
+          ],
+          "cookie": [],
+          "responseTime": "175",
+          "body": "{\n  \"date\": \"2017-03-31\",\n  \"explanation\": \"Get out your red/cyan glasses and gaze across the surface of Churyumov-Gerasimenko, aka Comet 67P. The stereo anaglyph was created by combining two images from the Rosetta spacecraft's narrow angle OSIRIS camera taken on September 22, 2014. Stark and jagged, the 3D landscape is found along the Seth region of the comet's double-lobed nucleus. It spans about 985 x 820 meters, pocked by circular ridges, depressions, and flattened areas strewn with boulders and debris. The large steep-walled circular pit in the foreground is 180 meters in diameter. Rosetta's mission to the comet ended in September 2016 when the spacecraft was commanded to a controlled impact with the comet's surface.\",\n  \"hdurl\": \"http://apod.nasa.gov/apod/image/1703/APOD-67P-Seth.jpg\",\n  \"media_type\": \"image\",\n  \"service_version\": \"v1\",\n  \"title\": \"3D 67P\",\n  \"url\": \"http://apod.nasa.gov/apod/image/1703/APOD-67P-Seth1024c.jpg\"\n}"
+        }
+      ]
+    },
+    {
+      "_postman_id": "62e27de3-7a55-316c-0e15-58ba9fe03af2",
+      "name": "Get Imgur auth token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// for commonly used tests, click on the snippets to the right for starter code. Any modifications or custom scripts can be written in JavaScript.",
+              "",
+              "// this first test ensures a successful 200 response status code",
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "   ",
+              "// this second block of code will parse the response object and re-set an environment variable",
+              "if (responseCode.code === 200) {",
+              "    ",
+              "    try {",
+              "        // parse the JSON response object to access the new access_token",
+              "        var result = JSON.parse(responseBody);",
+              "        var newAccessToken = result.access_token;",
+              "    }",
+              "    ",
+              "    catch(e) {",
+              "        console.log(e);",
+              "    }",
+              "    // the setEnvironmentVariable() method accepts a variable name and value as parameters. Use this method to establish environment variables that can be accessed in subsequent requests when the entire collection is run along with the corresponding environment template.",
+              "    postman.setEnvironmentVariable(\"imgurAccessToken\", newAccessToken);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "url": "https://api.imgur.com/oauth2/token",
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "refresh_token",
+              "value": "{{imgurRefreshToken}}",
+              "type": "text"
+            },
+            {
+              "key": "client_id",
+              "value": "{{imgurClientId}}",
+              "type": "text"
+            },
+            {
+              "key": "client_secret",
+              "value": "{{imgurClientSecret}}",
+              "type": "text"
+            },
+            {
+              "key": "grant_type",
+              "value": "refresh_token",
+              "type": "text"
+            }
+          ]
+        },
+        "description": "<img src=\"https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurLogo.png\" width=\"200px\">\n\nImgur access tokens are only valid for 1 month. We could add the access_token value to our environment under a new `imgurAccessToken` key, the same way we previously added our Imgur credentials to Postman, but we'd have to come back in a month and update our key.\n\nInstead, let's automate the authorization process to make sure we always have a valid token. \n\nFirst, we will use [Imgur's OAuth 2.0 process](https://apidocs.imgur.com/#authorization-and-oauth) to get a refresh token. \n\nIn the Postman app, under a new request (separate from this example collection), click on the **Authorization** tab, select OAuth 2.0, click on the **Get New Access Token** button, and fill in these values:\n    - Token Name: can be anything\n    - Auth URL: `https://api.imgur.com/oauth2/authorize`\n    - Access Token URL: `https://api.imgur.com/oauth2/token`\n    - Client ID: {{imgurClientId}}\n    - Client Secret: {{imgurClientSecret}}\n    - Grant Type: Authorization Code\n    - Request access token locally: checked\n  \n[![Postman OAuth 2.0](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAccessTokenModal.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAccessTokenModal.png) \n\nClick on **Request Token** to initiate the OAuth 2.0 flow authorizing the Postman app to connect to your Imgur account.\n\n[![Imgur Oauth](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurOauth.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurOauth.png) \n  \nOnce that is completed, add the `refresh_token` value to your environment under the `imgurRefreshToken` key, the same way you added your Imgur credentials to Postman in Step 2.\n   \n[![Imgur refresh token](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/refreshTokenOauth.jpg)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/refreshTokenOauth.jpg) \n  \nNow, we can submit a request using our `refresh_token` to get a new `access_token`.\n\n  - Method: `POST`\n\n  - URL: `https://api.imgur.com/oauth2/token`\n\n  - Body: Under the **Body** tab of our second request, add the required parameter values using double curly braces to access our environment variables.\n\n[![Imgur Authorization Request Body](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAuthBody.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAuthBody.png) \n\nUnder the **Tests** tab, we can write scripts in JavaScript to execute any logic after the request is sent. Looking closer at the Imgur response object, we can parse the JSON object to retrieve and store our data, like a new access token.\n\n[![Imgur Get Access Token](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurGetAccessToken_censored.jpg)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurGetAccessToken_censored.jpg) \n\nLet's set our environment variable based on the response from this request using Postmans `setEnvironmentVariable()` method and pass in our key and value. \n\n[![Imgur Set Access Token](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurSetAccessToken.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurSetAccessToken.png) \n\nCreating an environment variable allows us to access this stored value in subsequent requests when the entire collection is run with our environment.\n\nRead more about [OAuth 2.0 authentication](https://www.getpostman.com/docs/postman/sending_api_requests/authorization#oauth-20) and [environment variables](https://www.getpostman.com/docs/postman/environments_and_globals/variables) in the Postman docs.\n  "
+      },
+      "response": []
+    },
+    {
+      "_postman_id": "ea86dc10-3296-690c-b7c3-f94cccc62d0a",
+      "name": "Upload image to Imgur",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "tests[\"Status code is 200\"] = responseCode.code === 200;",
+              "",
+              "if (responseCode.code === 200) {",
+              "    // the setNextRequest() method accepts a request name or id within the same collection as a parameter. Use this method to establish a workflow sequence and designate which request in the same collection to run next, instead of the next request in the list. You can also use this method to stop workflow execution with a null parameter.",
+              "    postman.setNextRequest(null);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "url": "https://api.imgur.com/3/upload",
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{imgurAccessToken}}",
+            "description": ""
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "image",
+              "type": "text",
+              "value": "{{spaceUrl}}"
+            },
+            {
+              "key": "title",
+              "type": "text",
+              "value": "{{spaceTitle}}"
+            },
+            {
+              "key": "description",
+              "type": "text",
+              "value": "{{spaceExplanation}}"
+            }
+          ]
+        },
+        "description": "<img src=\"https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgur.png\">\n\nUpload an image to Imgur under your account\n===\n\nUsage of the Imgur API requires registration of your application. Review [documentation for the Imgur API](https://apidocs.imgur.com/). If you don't already have one, create an Imgur account, and [register a new application](https://api.imgur.com/oauth2/addclient).\n\nWe will be using the [image upload endpoint](https://apidocs.imgur.com/#226cd4dd-e8a2-8513-90d2-637c90b3ded5) from Imgur.\n\n- In the Postman request builder, we've selected the `POST` method from the dropdown, and entered the `https://api.imgur.com/3/upload` endpoint in the URL bar.\n- Under the Postman **Headers** tab, we've entered an `Authorization` key with the environment variable of our new access token, accessed via the variable name surrounded by double curly brackets. Running our collection with the corresponding environment template will automatically populate this variable with the value stored in the environment template.\n\n  [![update environment variable](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAccessToken1.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAccessToken1.png)\n\n- Under the Postman **Body** tab, we've entered a few body parameters to include in the image upload. For the `image` key, we will use a URL for an image as the value. We can access the environment variable that we created in the previous request within this collection, by once again using double curly brackets surrounding the environment variable name (e.g. `{{spaceUrl}}`).\n\n  [![format imgur parameters](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAuthBody.png)](https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/imgurAuthBody.png)"
+      },
+      "response": []
+    }
+  ]
+}
