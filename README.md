@@ -1,8 +1,12 @@
 ## Not your Grandma's Postman
 
-**Not your Grandma's Postman**: [tutorial for Postman](https://medium.com/@joycelin.codes/not-your-grandmas-postman-1b86b3df6fe3)
-
 [![grandma meme](https://github.com/loopDelicious/spacev1/blob/master/img/1prz87.jpg)](https://github.com/loopDelicious/spacev1/blob/master/img/1prz87.jpg)
+
+### Not your Grandma's Postman 
+
+[Tutorial for Postman](https://medium.com/@joycelin.codes/not-your-grandmas-postman-1b86b3df6fe3) demonstrating a second look at Postman features.
+
+### Sample Workflow
 
 [![sample workflow](https://github.com/loopDelicious/spacev1/blob/master/img/0-8NhhkHaciKNH8hLO.png)](https://github.com/loopDelicious/spacev1/blob/master/img/0-8NhhkHaciKNH8hLO.png)
 
