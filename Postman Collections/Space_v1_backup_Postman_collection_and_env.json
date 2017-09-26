@@ -49,7 +49,7 @@
       ],
       "request": {
         "url": {
-          "raw": "https://api.nasa.gov/planetary/apod?api_key={{ABC}}&hd=True",
+          "raw": "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&hd=True",
           "protocol": "https",
           "auth": {},
           "host": [
@@ -64,7 +64,7 @@
           "query": [
             {
               "key": "api_key",
-              "value": "{{ABC}}",
+              "value": "DEMO_KEY",
               "equals": true,
               "description": ""
             },
